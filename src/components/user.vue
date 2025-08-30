@@ -144,7 +144,7 @@ const handleNavClick = (tab) => {
       right: 0;
       height: 220px; // 调整背景图高度
       background-image: url(../assets/images/image.png);
-      background-position: center;
+      background-position: center top; // 显示图片上部
       background-size: cover;
       background-repeat: no-repeat;
       opacity: 0.6;

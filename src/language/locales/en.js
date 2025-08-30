@@ -76,6 +76,8 @@ export default {
         Continue_Watching:'Continue Watching',
         More_Recommended:'More Recommended',
         Total:'Total',
+        Please_Watch_In_Order:'Please watch episodes in order. You can only unlock the next episode after watching the current one.',
+        Watch_Current_Episode_First:'Please watch the current episode first before unlocking the next one.',
 
       }
 }

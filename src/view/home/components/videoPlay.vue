@@ -98,8 +98,12 @@
           <div class="episode-grid">
             <div v-for="n in getVisibleEpisodes()" 
                  :key="n" 
-                 :class="['episode-item', { active: n === Number(chapterId) }]"
-                 @click="handleEpisodeClick(n)">
+                 :class="['episode-item', { 
+                   active: n === Number(chapterId),
+                   unlockable: canUnlockEpisode(n),
+                   unlocked: !isEpisodeLocked(n)
+                 }]"
+                 @click="canPlayEpisode(n) ? handleEpisodeClick(n) : handleLockedEpisodeClick(n)">
               <span v-if="n !== Number(chapterId)">{{ n }}</span>
               <img src="@/assets/gif/viderPlay.gif" alt="" v-else>
               
@@ -196,9 +200,37 @@ const isLoading = ref(false)
 const unlockChapterIdomfp = ref({})
 // 添加判断集数是否锁定的方法
 const isEpisodeLocked = (episodeNum) => {
-  // 如果 unlockChapterId 为 null 或 undefined，默认只解锁第一集
-  const unlockedEpisode = unlockChapterIdomfp.value?.unlockChapterId 
-  return episodeNum > unlockedEpisode
+  // 使用 watchChapterId 字段判断集数是否解锁
+  const watchChapterId = unlockChapterIdomfp.value?.watchChapterId 
+  // 如果 watchChapterId 为 null 或 undefined，默认只解锁第一集
+  return episodeNum > (watchChapterId || 1)
+}
+
+// 检查是否可以解锁指定集数（只能按顺序解锁）
+const canUnlockEpisode = (episodeNum) => {
+  const watchChapterId = unlockChapterIdomfp.value?.watchChapterId || 1
+  // 只能解锁下一集，不能跳着解锁
+  return episodeNum === watchChapterId + 1
+}
+
+// 检查集数是否可以播放（已解锁或可以解锁）
+const canPlayEpisode = (episodeNum) => {
+  const watchChapterId = unlockChapterIdomfp.value?.watchChapterId || 1
+  // 已解锁的集数或可以解锁的下一集都可以播放
+  return episodeNum <= watchChapterId || episodeNum === watchChapterId + 1
+}
+
+// 处理锁定集数的点击事件
+const handleLockedEpisodeClick = (episodeNum) => {
+  const watchChapterId = unlockChapterIdomfp.value?.watchChapterId || 1
+  
+  if (episodeNum > watchChapterId + 1) {
+    // 如果集数差距大于1，提示用户需要按顺序观看
+    ElMessage.warning(t('message.Please_Watch_In_Order'))
+  } else if (episodeNum === watchChapterId + 1) {
+    // 如果是下一集，提示用户需要先观看当前集数
+    ElMessage.info(t('message.Watch_Current_Episode_First'))
+  }
 }
 //点击收藏
 const handleCollect = async (type) => {
@@ -270,6 +302,12 @@ const fetchVideoAndChapterInfo = async (bookId, chapterId, retryCount = 1) => {
 // 修改点击处理函数
 const handleEpisodeClick = async (episodeNum) => {
   try {
+    // 检查集数是否可以播放
+    if (!canPlayEpisode(episodeNum)) {
+      ElMessage.warning(t('message.Please_Watch_In_Order'))
+      return
+    }
+    
     isLoading.value = true
     chapterId.value = episodeNum
     
@@ -283,7 +321,7 @@ const handleEpisodeClick = async (episodeNum) => {
       // 解锁成功，更新状态并继续加载
       unlockChapterIdomfp.value = {
         ...unlockChapterIdomfp.value,
-        unlockChapterId: Math.max(unlockChapterIdomfp.value?.unlockChapterId || 0, episodeNum)
+        watchChapterId: Math.max(unlockChapterIdomfp.value?.watchChapterId || 1, episodeNum)
       }
       
       // 更新章节信息
@@ -698,6 +736,26 @@ onMounted(async () => {
             
             &:hover {
               background: rgba(255, 255, 255, 0.1);  // 禁用hover效果
+            }
+          }
+          
+          // 为可以解锁的下一集添加特殊样式
+          &.unlockable {
+            border: 2px solid #D0A944;
+            cursor: pointer;
+            
+            &:hover {
+              background: rgba(208, 169, 68, 0.1);
+            }
+          }
+          
+          // 为已解锁的集数添加样式
+          &.unlocked {
+            border: 1px solid #2C2E31;
+            cursor: pointer;
+            
+            &:hover {
+              background: rgba(255, 255, 255, 0.2);
             }
           }
         }

@@ -18,7 +18,7 @@
                 :class="{ 'active': selectedIndex === index }"
                 @click="selectItem(index,item)"
             >
-                <img :src="item.bannerUrl" alt="Book Cover">
+                <img :src="item.fontUrl" alt="Book Cover">
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@ const headerStyle = computed(() => ({
     backgroundImage: `linear-gradient(to top,
         rgba(13, 17, 23, 0.7),
         rgba(13, 17, 23, 0.2)
-    ), url('${selectedItem.value?.bannerUrl || '@/assets/images/image.png'}')`
+    ), url('${selectedItem.value?.fontUrl || '@/assets/images/image.png'}')`
 }))
 
 const selectItem = (index,item) => {
