@@ -19,7 +19,4 @@ html::-webkit-scrollbar,
 body::-webkit-scrollbar {
   display: none;
 }
-body {
-  background-color: var(--bg-primary);
- 
-}
+
