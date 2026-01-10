@@ -2,10 +2,8 @@
 import { useUserStore } from './stores/user'
 import { useRoute } from 'vue-router'
 import { computed, onMounted } from 'vue'
-import Header from '@/components/header.vue'
-import Footer from '@/components/footer.vue'
 import { useThemeStore } from './stores/theme'
-import isMobile from 'ismobilejs'
+import Terms from './view/terms/index.vue'
 const userStore = useUserStore()
 const route = useRoute()
 const themeStore = useThemeStore()
@@ -22,7 +20,8 @@ onMounted(() => {
 </script>
 
 <template>
-   <router-view></router-view>
+   <!-- <router-view></router-view> -->
+   <Terms />
 </template>
 
 <style scoped>

@@ -64,22 +64,7 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ''), // 重写路径
         secure: false, // 如果是https接口，需要配置这个参数
       },
-      '/hls': {
-        target: 'https://zhongdong-stream.startvs.net',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/hls/, ''),
-        headers: {
-          Referer: 'https://zhongdong-stream.startvs.net',
-          Origin: 'https://zhongdong-stream.startvs.net',
-          Host: 'zhongdong-stream.startvs.net'
-        }
-      },
-      // 添加字幕文件的代理
-      '/subtitle': {
-        target: 'https://subtitle-zhongdong.s3.me-central-1.amazonaws.com',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/subtitle/, '')
-      }
+     
     }
   },
   optimizeDeps: {
